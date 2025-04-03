@@ -15,7 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
-    //int contador=0;
+    int contador=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
 //lamba
         btnShow.setOnClickListener(v -> {
                 Log.i("Main", "Ah");
-//+contador++
-                tvMessage.setText("Hola mundo");
+
+                tvMessage.setText("Hola mundo"+contador++);
 
             Intent intent = new Intent(MainActivity.this, SecondActivity.class);
             startActivity(intent);
