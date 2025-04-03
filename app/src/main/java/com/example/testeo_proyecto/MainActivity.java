@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         btnShow.setOnClickListener(v -> {
                 Log.i("Main", "Ah");
 
-                tvMessage.setText("Hola mundo");
+                tvMessage.setText("Hola mundo_Cambio");
 //+contador++
             Intent intent = new Intent(MainActivity.this, SecondActivity.class);
             startActivity(intent);
