@@ -20,27 +20,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);//define que layout se va a usar
-        Button btnShow = findViewById(R.id.btnShowMessage);
-        TextView tvMessage = findViewById(R.id.tvMessage);
-
-
-//lamba
-        btnShow.setOnClickListener(v -> {
-                Log.i("Main", "Ah");
-
-                tvMessage.setText("Hola mundo_Cambio");
-//+contador++
-            Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-            startActivity(intent);
-        });
-
-        //btnShow.setOnClickListener(new View.OnClickListener() {
-          //  @Override
-            //public void onClick(View v) {
-              //  tvMessage.setText("Hola mundo");
-            //}
-
-        //});
 
 
 
