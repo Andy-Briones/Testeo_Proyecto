@@ -21,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);//define que layout se va a usar
 
+        Intent intent = new Intent(this, SecondActivity.class);
+        startActivity(intent);
 
 
 
