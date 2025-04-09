@@ -1,5 +1,6 @@
 package com.example.testeo_proyecto.adapters;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Telephony;
@@ -33,14 +34,15 @@ public class ThirdActivity extends AppCompatActivity {
             return insets;
 
         });
-        Colores col = new Colores(C,Co);
-        col.nombreColor = "Black";
-        col.Codigo = "ff16551";
 
-        Button btn1 = new Button(holder.itemView.findViewById(R.id.btnColor));
+        //Button btn1 = new Button(R.id.btnColor);
+        // (R.id.btnColor));
+
+        Colores col = new Colores("Blue", "3300CC");
+
 
         List<String> data2 = new ArrayList<>();
-        data2.add(col.nombreColor + "\\\n"+col.Codigo);
+        data2.add(col.nombreColor +col.Codigo);
 
         BasicAdapter basicAdapter = new BasicAdapter(data2);
         RecyclerView rvBasic2 = findViewById(R.id.rvBasic2);
@@ -58,6 +60,13 @@ public class ThirdActivity extends AppCompatActivity {
             this.nombreColor=nombreColor;
             this.Codigo=codigo;
         }
-
     }
+    public Colores[] colors = new Colores[]{
+            new Colores("Rojo", "#FF0000"),
+            new Colores("Verde", "#00FF00"),
+            new Colores("Azul", "#0000FF"),
+            new Colores("Amarillo", "#FFFF00"),
+            new Colores("Naranja", "#FFA500"),
+            new Colores("Morado", "#800080")
+    };
 }

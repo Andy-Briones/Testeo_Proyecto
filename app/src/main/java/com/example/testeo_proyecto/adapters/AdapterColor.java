@@ -37,7 +37,7 @@ public class AdapterColor extends RecyclerView.Adapter<AdapterColor.BasicViewHol
     public void onBindViewHolder(@NonNull BasicViewHolder2 holder, int position) {
         TextView tvText = holder.itemView.findViewById(R.id.tvNameColor);
         TextView tvNum = holder.itemView.findViewById(R.id.tvCodeColor);
-        Button btn1 = holder.itemView.findViewById(R.id.btnColor);
+        Button btn = holder.itemView.findViewById(R.id.btnColores);
         String text = data2.get(position);
         tvText.setText(text);
     }

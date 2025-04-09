@@ -23,28 +23,24 @@
 
         />
 
-    <Button
-        android:id="@+id/btnColor"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvBasic2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="287dp"
-        android:layout_height="11dp"
-        android:text="TextView"
+    <Button
+        android:id="@+id/btnColores"
+        android:layout_width="30pt"
+        android:layout_height="30pt"
+        android:backgroundTint="@color/black"
+        android:text="Blue"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/tvNameColor"
-        app:layout_constraintStart_toStartOf="@+id/tvNameColor"
-        app:layout_constraintTop_toTopOf="@+id/tvNameColor" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.143"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.131" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
