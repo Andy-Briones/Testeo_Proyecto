@@ -65,4 +65,5 @@ public class SecondActivity extends AppCompatActivity {
             this.num =num;
         }
     }
+
 }

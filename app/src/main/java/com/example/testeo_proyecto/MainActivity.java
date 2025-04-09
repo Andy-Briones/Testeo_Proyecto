@@ -13,6 +13,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.testeo_proyecto.adapters.ThirdActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     //int contador=0;
@@ -20,11 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);//define que layout se va a usar
-
-        Intent intent = new Intent(this, SecondActivity.class);
+        Intent intent = new Intent(this, ThirdActivity.class);
         startActivity(intent);
-
-
-
     }
 }
