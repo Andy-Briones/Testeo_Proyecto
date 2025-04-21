@@ -10,6 +10,5 @@ public class ColorResponse {
     public String message;
 
     @SerializedName("colors")
-    public List<Colores>Colors;
-
+    public List<Colores>Colorss;
 }

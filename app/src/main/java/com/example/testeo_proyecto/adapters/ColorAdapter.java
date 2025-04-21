@@ -1,14 +1,17 @@
 package com.example.testeo_proyecto.adapters;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.testeo_proyecto.FormColorActivity;
 import com.example.testeo_proyecto.R;
 import com.example.testeo_proyecto.entities.Colores;
 
@@ -40,13 +43,27 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorsViewHo
         TextView tvHex = holder.itemView.findViewById(R.id.tvNomHex);
         View vColorBg = holder.itemView.findViewById(R.id.rvColorBg);
 
-        tvNomCol.setText(colors.nombre);
+        tvNomCol.setText(colors.name);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(),"Color: " + colors.name, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(v.getContext(), FormColorActivity.class);
+
+                //los extras me permiten enviar informacion entre actividades
+                intent.putExtra("colorId",colors.id);
+                intent.putExtra("colorName",colors.name);
+                intent.putExtra("colorHex", colors.num);
+                v.getContext().startActivity(intent);
+            }
+        });
 
         try
         {
-            String hex = "#"+colors.num.trim();
+            String hex = colors.num.trim();
             tvHex.setText(hex);
-            vColorBg.setBackgroundColor(android.graphics.Color.parseColor(hex));
+            vColorBg.setBackgroundColor(android.graphics.Color.parseColor(colors.num));
         }catch (Exception e)
         {
             Log.d("Main App", "Usando Color por defecto");

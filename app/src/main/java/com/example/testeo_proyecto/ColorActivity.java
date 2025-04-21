@@ -4,8 +4,12 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -18,6 +22,7 @@ import com.example.testeo_proyecto.adapters.BasicAdapter;
 import com.example.testeo_proyecto.entities.ColorResponse;
 import com.example.testeo_proyecto.entities.Colores;
 import com.example.testeo_proyecto.adapters.ColorAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +34,13 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ColorActivity extends AppCompatActivity {
+    RecyclerView rvColoress;
+    boolean isLoading = false;
+    boolean isLastPage = false;
+    int currentPage = 1;
+
+    List<Colores> data = new ArrayList<>();
+    ColorAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,29 +53,100 @@ public class ColorActivity extends AppCompatActivity {
             return insets;
         });
 
-        RecyclerView rvColoress = findViewById(R.id.rvColores);
+        Toast.makeText(getApplicationContext(),"ColorActivity onCreate", Toast.LENGTH_SHORT).show();
+
+        FloatingActionButton button = findViewById(R.id.fabGotoColorForm);
+        button.setOnClickListener(v -> {
+            Intent intent = new Intent(this, FormColorActivity.class);
+            startActivity(intent);
+        });
+
+        rvColoress = findViewById(R.id.rvColores);
         rvColoress.setLayoutManager(new LinearLayoutManager(this));
 
+        setUpReciclerView();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        Toast.makeText(getApplicationContext(), "ColorActivity OnResume", Toast.LENGTH_LONG).show();
+
+        data.clear();
+        currentPage = 1;
+        adapter.notifyDataSetChanged(); //notifica al adapter que los datos han cambiado
+
+        loadMoreColors();
+    }
+
+    private void loadMoreColors()
+    {
+        isLoading = true;
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.csscolorsapi.com").addConverterFactory(GsonConverterFactory.create())
+                .baseUrl("https://67ff052558f18d7209efd0c8.mockapi.io")
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
-        //https://www.csscolorsapi.com/api/colors
+        //https://67ff052558f18d7209efd0c8.mockapi.io/Colores
         ColorService service = retrofit.create(ColorService.class);
-
-        service.getColors().enqueue(new Callback<ColorResponse>() {
+        service.getColors(2,currentPage).enqueue(new Callback<List<Colores>>() {
             @Override
-            public void onResponse(Call<ColorResponse> call, Response<ColorResponse> response) {
+            public void onResponse(Call<List<Colores>> call, Response<List<Colores>> response) {
+                isLoading = false;
+
                 if (!response.isSuccessful()) return;
-                List<Colores> data = response.body().Colors;
-                ColorAdapter adapter = new ColorAdapter(data);
-                rvColoress.setAdapter(adapter);
+                if (response.body() == null) return;
+                if (response.body().isEmpty())
+                {
+                    isLastPage = true;
+                    return;
+                }
+
+                data.addAll(response.body());//añade los nuevos colores a la lista
+                adapter.notifyDataSetChanged();
+                //List<Colores> data = response.body();
             }
 
             @Override
-            public void onFailure(Call<ColorResponse> call, Throwable throwable) {
+            public void onFailure(Call<List<Colores>> call, Throwable throwable) {
+                isLoading = false;
+            }
+        });
+    }
 
+    private void setUpReciclerView()
+    {
+        adapter = new ColorAdapter(data);
+        rvColoress.setAdapter(adapter);
+
+        //Scroll Listener permite detectar cuando el usuario hace scroll y llega al final de la lista
+        //para cargar mas datos
+        rvColoress.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (layoutManager == null) return;
+
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                if (!isLoading && !isLastPage)
+                {
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0)
+                    {
+                        currentPage++;
+                        loadMoreColors();
+                    }
+                }
             }
         });
     }
