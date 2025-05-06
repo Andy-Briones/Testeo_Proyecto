@@ -15,6 +15,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.testeo_proyecto.Services.ColorService;
 import com.example.testeo_proyecto.entities.Colores;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,7 +32,7 @@ public class FormColorActivity extends AppCompatActivity {
     Button btnDelete;
     EditText edtNombreColor;
     EditText edtHexColor;
-    int colorId=0;
+    String colorId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +58,7 @@ public class FormColorActivity extends AppCompatActivity {
 
         //los getIntent() permiten obtener la informacion que se envio desde otra actividad anterior
         Intent intent = getIntent();
-        colorId = intent.getIntExtra("colorId",0);
+        colorId = intent.getStringExtra("colorId");
         String  colorName = intent.getStringExtra("colorName");
         String  colorHex = intent.getStringExtra("colorHex");
 
@@ -64,7 +67,7 @@ public class FormColorActivity extends AppCompatActivity {
             edtNombreColor.setText(colorName);
             edtHexColor.setText(colorHex);
         }
-        if (colorId == 0)
+        if (colorId == null)
         {
             btnDelete.setVisibility(View.GONE);
         }
@@ -82,7 +85,7 @@ public class FormColorActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                //finish(); //termina la actividad actual
-                if (colorId == 0)
+                if (colorId == null)
                 {
                     save();
                 }
@@ -99,7 +102,7 @@ public class FormColorActivity extends AppCompatActivity {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (colorId != 0)
+                if (colorId != null)
                 {
                     delete();
                 }
@@ -112,63 +115,101 @@ public class FormColorActivity extends AppCompatActivity {
         color.name = edtNombreColor.getText().toString();
         color.num = edtHexColor.getText().toString();
 
-        service.create(color).enqueue(new Callback<>() {
-            @Override
-            public void onResponse(Call<Colores> call, Response<Colores> response) {
-                if (response.isSuccessful()) {
-                    finish(); //termina la actividad actual (hacer atras en la pantalla)
-                    Toast.makeText(getApplicationContext(), "Color creado", Toast.LENGTH_LONG).show();
-                } else {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference myref = firebaseDatabase.getReference();
+        DatabaseReference colorRef = myref.child("colors").push();
+        color.id = colorRef.getKey();
+        colorRef.setValue(color)
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(getApplicationContext(), "color creado", Toast.LENGTH_LONG).show();
+                })
+                .addOnFailureListener(f ->{
                     Toast.makeText(getApplicationContext(), "Error al crear color", Toast.LENGTH_LONG).show();
-                }
-            }
+                });
 
-            @Override
-            public void onFailure(Call<Colores> call, Throwable throwable) {
-                Toast.makeText(getApplicationContext(), "Error de red", Toast.LENGTH_LONG).show();
-            }
-        });
+
+//        service.create(color).enqueue(new Callback<>() {
+//            @Override
+//            public void onResponse(Call<Colores> call, Response<Colores> response) {
+//                if (response.isSuccessful()) {
+//                    finish(); //termina la actividad actual (hacer atras en la pantalla)
+//                    Toast.makeText(getApplicationContext(), "Color creado", Toast.LENGTH_LONG).show();
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "Error al crear color", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Colores> call, Throwable throwable) {
+//                Toast.makeText(getApplicationContext(), "Error de red", Toast.LENGTH_LONG).show();
+//            }
+//        });
     }
     private void update()
     {
         Colores color = new Colores();
+        color.id = colorId;
         color.name = edtNombreColor.getText().toString();
         color.num = edtHexColor.getText().toString();
 
-        service.update(color,colorId).enqueue(new Callback<Colores>() {
-            @Override
-            public void onResponse(Call<Colores> call, Response<Colores> response) {
-                if (response.isSuccessful()) {
-                    finish();
-                    Toast.makeText(getApplicationContext(), "Color actualizado", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Error al actualizar color", Toast.LENGTH_LONG).show();
-                }
-            }
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("colors");
 
-            @Override
-            public void onFailure(Call<Colores> call, Throwable throwable) {
+        myRef.child(colorId).setValue(color)
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(getApplicationContext(), "color creado", Toast.LENGTH_LONG).show();
+                })
+                .addOnFailureListener(f ->{
+                    Toast.makeText(getApplicationContext(), "Error al crear color", Toast.LENGTH_LONG).show();
+                });
 
-            }
-        });
+//        service.update(color,colorId).enqueue(new Callback<Colores>() {
+//            @Override
+//            public void onResponse(Call<Colores> call, Response<Colores> response) {
+//                if (response.isSuccessful()) {
+//                    Intent intent= new Intent();
+//                    intent.putExtra("colorId", colorId);
+//                    intent.putExtra("colorName",response.body().name);
+//
+//                    setResult(RESULT_OK, intent);
+//                    finish();
+//                    Toast.makeText(getApplicationContext(), "Color actualizado", Toast.LENGTH_LONG).show();
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "Error al actualizar color", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Colores> call, Throwable throwable) {
+//
+//            }
+//        });
     }
     private void delete()
     {
-        service.delete(colorId).enqueue(new Callback<Colores>() {
-            @Override
-            public void onResponse(Call<Colores> call, Response<Colores> response) {
-                if (response.isSuccessful()) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("colors");
+
+        myRef.child(colorId).removeValue()
+                .addOnSuccessListener(s ->{
                     finish();
                     Toast.makeText(getApplicationContext(), "Color eliminado", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Error al eliminar color", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Colores> call, Throwable throwable) {
-
-            }
-        });
+                });
+//        service.delete(colorId).enqueue(new Callback<Colores>() {
+//            @Override
+//            public void onResponse(Call<Colores> call, Response<Colores> response) {
+//                if (response.isSuccessful()) {
+//                    finish();
+//                    Toast.makeText(getApplicationContext(), "Color eliminado", Toast.LENGTH_LONG).show();
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "Error al eliminar color", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Colores> call, Throwable throwable) {
+//
+//            }
+//        });
     }
 }

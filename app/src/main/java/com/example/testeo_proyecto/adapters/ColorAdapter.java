@@ -1,5 +1,6 @@
 package com.example.testeo_proyecto.adapters;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,9 +22,11 @@ import java.util.List;
 
 public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorsViewHolder> {
     private List<Colores> data;
+    private Activity activity;
 
-    public ColorAdapter(List<Colores> data) {
+    public ColorAdapter(List<Colores> data, Activity activity) {
         this.data = data;
+        this.activity = activity;
     }
 
     @NonNull
@@ -55,7 +58,8 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorsViewHo
                 intent.putExtra("colorId",colors.id);
                 intent.putExtra("colorName",colors.name);
                 intent.putExtra("colorHex", colors.num);
-                v.getContext().startActivity(intent);
+
+                activity.startActivityForResult(intent, 123);
             }
         });
 
